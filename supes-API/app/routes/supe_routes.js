@@ -101,8 +101,6 @@ router.delete('/supes/:id', requireToken, (req, res, next) => {
 	Supe.findById(req.params.id)
 		.then(handle404)
 		.then((supe) => {
-			// throw an error if current user doesn't own `supe`
-			requireOwnership(req, supe)
 			// delete the supe ONLY IF the above didn't throw
 			supe.deleteOne()
 		})
