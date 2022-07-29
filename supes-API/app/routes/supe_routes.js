@@ -3,8 +3,8 @@ const express = require('express')
 // Passport docs: http://www.passportjs.org/docs/
 const passport = require('passport')
 
-// pull in Mongoose model for supers
-const Super = require('../models/supe')
+// pull in Mongoose model for supes
+const Supe = require('../models/supe')
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
@@ -29,7 +29,7 @@ const router = express.Router()
 
 // INDEX
 // GET /supes
-router.get('/supes', requireToken, (req, res, next) => {
+router.get('/supes', (req, res, next) => {
 	Supe.find()
 		.then((supes) => {
 			// `supes` will be an array of Mongoose documents
