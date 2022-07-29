@@ -44,8 +44,8 @@ router.get('/supes', (req, res, next) => {
 })
 
 // SHOW
-// GET /supes/5a7db6c74d55bc51bdf39793
-router.get('/supes/:id', requireToken, (req, res, next) => {
+// GET /supes/:id
+router.get('/supes/:id', (req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
 	Supe.findById(req.params.id)
 		.then(handle404)
