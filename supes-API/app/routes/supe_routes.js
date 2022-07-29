@@ -96,7 +96,7 @@ router.patch('/supes/:id', requireToken, removeBlanks, (req, res, next) => {
 })
 
 // DESTROY
-// DELETE /supes/5a7db6c74d55bc51bdf39793
+// DELETE /supes/:id
 router.delete('/supes/:id', requireToken, (req, res, next) => {
 	Supe.findById(req.params.id)
 		.then(handle404)
