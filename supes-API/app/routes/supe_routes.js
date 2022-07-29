@@ -3,8 +3,8 @@ const express = require('express')
 // Passport docs: http://www.passportjs.org/docs/
 const passport = require('passport')
 
-// pull in Mongoose model for examples
-const Example = require('../models/example')
+// pull in Mongoose model for supers
+const Super = require('../models/supe')
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
@@ -28,43 +28,43 @@ const requireToken = passport.authenticate('bearer', { session: false })
 const router = express.Router()
 
 // INDEX
-// GET /examples
-router.get('/examples', requireToken, (req, res, next) => {
-	Example.find()
-		.then((examples) => {
-			// `examples` will be an array of Mongoose documents
+// GET /supes
+router.get('/supes', requireToken, (req, res, next) => {
+	Supe.find()
+		.then((supes) => {
+			// `supes` will be an array of Mongoose documents
 			// we want to convert each one to a POJO, so we use `.map` to
 			// apply `.toObject` to each one
-			return examples.map((example) => example.toObject())
+			return supes.map((supe) => supe.toObject())
 		})
-		// respond with status 200 and JSON of the examples
-		.then((examples) => res.status(200).json({ examples: examples }))
+		// respond with status 200 and JSON of the supes
+		.then((supes) => res.status(200).json({ supes: supes }))
 		// if an error occurs, pass it to the handler
 		.catch(next)
 })
 
 // SHOW
-// GET /examples/5a7db6c74d55bc51bdf39793
-router.get('/examples/:id', requireToken, (req, res, next) => {
+// GET /supes/5a7db6c74d55bc51bdf39793
+router.get('/supes/:id', requireToken, (req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
-	Example.findById(req.params.id)
+	Supe.findById(req.params.id)
 		.then(handle404)
-		// if `findById` is succesful, respond with 200 and "example" JSON
-		.then((example) => res.status(200).json({ example: example.toObject() }))
+		// if `findById` is succesful, respond with 200 and "supe" JSON
+		.then((supe) => res.status(200).json({ supe: supe.toObject() }))
 		// if an error occurs, pass it to the handler
 		.catch(next)
 })
 
 // CREATE
-// POST /examples
-router.post('/examples', requireToken, (req, res, next) => {
-	// set owner of new example to be current user
-	req.body.example.owner = req.user.id
+// POST /supes
+router.post('/supes', requireToken, (req, res, next) => {
+	// set owner of new supe to be current user
+	req.body.supe.owner = req.user.id
 
-	Example.create(req.body.example)
-		// respond to succesful `create` with status 201 and JSON of new "example"
-		.then((example) => {
-			res.status(201).json({ example: example.toObject() })
+	Supe.create(req.body.supe)
+		// respond to succesful `create` with status 201 and JSON of new "supe"
+		.then((supe) => {
+			res.status(201).json({ supe: supe.toObject() })
 		})
 		// if an error occurs, pass it off to our error handler
 		// the error handler needs the error message and the `res` object so that it
@@ -73,21 +73,21 @@ router.post('/examples', requireToken, (req, res, next) => {
 })
 
 // UPDATE
-// PATCH /examples/5a7db6c74d55bc51bdf39793
-router.patch('/examples/:id', requireToken, removeBlanks, (req, res, next) => {
+// PATCH /supes/5a7db6c74d55bc51bdf39793
+router.patch('/supes/:id', requireToken, removeBlanks, (req, res, next) => {
 	// if the client attempts to change the `owner` property by including a new
 	// owner, prevent that by deleting that key/value pair
-	delete req.body.example.owner
+	delete req.body.supe.owner
 
-	Example.findById(req.params.id)
+	Supe.findById(req.params.id)
 		.then(handle404)
-		.then((example) => {
+		.then((supe) => {
 			// pass the `req` object and the Mongoose record to `requireOwnership`
 			// it will throw an error if the current user isn't the owner
-			requireOwnership(req, example)
+			requireOwnership(req, supe)
 
 			// pass the result of Mongoose's `.update` to the next `.then`
-			return example.updateOne(req.body.example)
+			return supe.updateOne(req.body.supe)
 		})
 		// if that succeeded, return 204 and no JSON
 		.then(() => res.sendStatus(204))
@@ -96,15 +96,15 @@ router.patch('/examples/:id', requireToken, removeBlanks, (req, res, next) => {
 })
 
 // DESTROY
-// DELETE /examples/5a7db6c74d55bc51bdf39793
-router.delete('/examples/:id', requireToken, (req, res, next) => {
-	Example.findById(req.params.id)
+// DELETE /supes/5a7db6c74d55bc51bdf39793
+router.delete('/supes/:id', requireToken, (req, res, next) => {
+	Supe.findById(req.params.id)
 		.then(handle404)
-		.then((example) => {
-			// throw an error if current user doesn't own `example`
-			requireOwnership(req, example)
-			// delete the example ONLY IF the above didn't throw
-			example.deleteOne()
+		.then((supe) => {
+			// throw an error if current user doesn't own `supe`
+			requireOwnership(req, supe)
+			// delete the supe ONLY IF the above didn't throw
+			supe.deleteOne()
 		})
 		// send back 204 and no content if the deletion succeeded
 		.then(() => res.sendStatus(204))
